@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دریافت Session ID اینستاگرام</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px 24px;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .logo { font-size: 48px; margin-bottom: 12px; }
+        h1 { font-size: 20px; color: #262626; margin-bottom: 8px; }
+        .sub { color: #8e8e8e; font-size: 14px; margin-bottom: 24px; }
+        .step {
+            background: #f8f8f8;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            text-align: right;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .step-num {
+            background: linear-gradient(135deg, #833ab4, #fd1d1d);
+            color: white;
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .step-text { font-size: 14px; color: #262626; line-height: 1.5; }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn-main { background: linear-gradient(135deg, #833ab4, #fd1d1d); color: white; }
+        .btn-ig { background: linear-gradient(135deg, #405de6, #5851db, #833ab4); color: white; margin-bottom: 12px; }
+        .result-box { display: none; background: #e8f5e9; border: 2px solid #4caf50; border-radius: 12px; padding: 16px; margin-top: 16px; }
+        .result-box.error { background: #fdecea; border-color: #f44336; }
+        .result-label { font-size: 13px; color: #555; margin-bottom: 8px; }
+        .result-value {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-family: monospace;
+            font-size: 12px;
+            word-break: break-all;
+            color: #262626;
+            text-align: left;
+            direction: ltr;
+            margin-bottom: 10px;
+        }
+        .copy-btn { background: #4caf50; color: white; border: none; border-radius: 8px; padding: 10px 20px; font-size: 14px; cursor: pointer; width: 100%; }
+        .copy-btn.copied { background: #2e7d32; }
+        .note { font-size: 12px; color: #8e8e8e; margin-top: 16px; }
+        .divider { height: 1px; background: #efefef; margin: 16px 0; }
+        .alt-box { background: #fff3e0; border-radius: 10px; padding: 12px; margin-top: 12px; font-size: 13px; text-align: right; display: none; }
+        .bm-code { width: 100%; height: 60px; font-size: 11px; direction: ltr; margin-top: 8px; border-radius: 6px; padding: 6px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="logo">🍪</div>
+    <h1>دریافت Session ID اینستاگرام</h1>
+    <p class="sub">برای اتصال ربات تلگرام به اینستاگرام شما</p>
+
+    <div class="step">
+        <div class="step-num">۱</div>
+        <div class="step-text">اگر در این مرورگر وارد اینستاگرام نشده‌اید، از دکمه زیر وارد شوید:</div>
+    </div>
+    <a href="https://www.instagram.com/accounts/login/" target="_blank">
+        <button class="btn btn-ig">📸 ورود به اینستاگرام</button>
+    </a>
+
+    <div class="step">
+        <div class="step-num">۲</div>
+        <div class="step-text">پس از ورود، به این صفحه برگردید و دکمه زیر را بزنید:</div>
+    </div>
+    <button class="btn btn-main" onclick="getSessionId()">⚡ دریافت خودکار Session ID</button>
+
+    <div id="result-box" class="result-box">
+        <div class="result-label" id="result-label">✅ Session ID شما:</div>
+        <div class="result-value" id="result-value"></div>
+        <button class="copy-btn" id="copy-btn" onclick="copySession()">📋 کپی کردن</button>
+    </div>
+
+    <div id="alt-box" class="alt-box">
+        <b>روش جایگزین (Paste در آدرس مرورگر):</b><br>
+        ابتدا وارد instagram.com شوید، سپس کد زیر را در نوار آدرس paste کنید و Enter بزنید:<br>
+        <textarea id="bm-code" class="bm-code" onclick="this.select()" readonly></textarea>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="step">
+        <div class="step-num">۳</div>
+        <div class="step-text">Session ID کپی‌شده را به ربات تلگرام ارسال کنید.</div>
+    </div>
+
+    <p class="note">🔒 این صفحه هیچ اطلاعاتی را ذخیره نمی‌کند. Session ID فقط در مرورگر شما خوانده می‌شود.</p>
+</div>
+
+<script>
+var BM = "javascript:(function(){var s=(document.cookie+';').match(/sessionid=([^;]+)/);if(s){prompt('Session ID:',s[1]);}else{alert('ابتدا وارد instagram.com شوید!');}})();";
+
+function getSessionId() {
+    var cookies = document.cookie;
+    var match = (cookies + ';').match(/sessionid=([^;]+)/);
+    var resultBox = document.getElementById('result-box');
+    var resultValue = document.getElementById('result-value');
+    var resultLabel = document.getElementById('result-label');
+    var copyBtn = document.getElementById('copy-btn');
+    var altBox = document.getElementById('alt-box');
+
+    resultBox.style.display = 'block';
+
+    if (match && match[1]) {
+        resultLabel.textContent = '✅ Session ID شما:';
+        resultValue.textContent = match[1];
+        resultBox.className = 'result-box';
+        copyBtn.style.display = 'block';
+    } else {
+        resultLabel.textContent = '⚠️ نتیجه:';
+        resultValue.textContent = 'Session ID یافت نشد.\nلطفاً ابتدا وارد instagram.com شوید سپس دوباره تلاش کنید.';
+        resultBox.className = 'result-box error';
+        copyBtn.style.display = 'none';
+        altBox.style.display = 'block';
+        document.getElementById('bm-code').value = BM;
+    }
+}
+
+function copySession() {
+    var text = document.getElementById('result-value').textContent;
+    var btn = document.getElementById('copy-btn');
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(function() {
+            btn.textContent = '✅ کپی شد! حالا به ربات ارسال کنید';
+            btn.className = 'copy-btn copied';
+        });
+    } else {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.textContent = '✅ کپی شد!';
+        btn.className = 'copy-btn copied';
+    }
+}
+</script>
+</body>
+</html>
